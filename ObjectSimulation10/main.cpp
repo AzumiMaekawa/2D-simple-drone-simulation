@@ -18,7 +18,7 @@
 double cnt = 0;
 double dt = 0.01;
 const int delay_time = 50;
-const int StepNum = 100;
+const int StepNum = 400;
 double StepSize = MaxPower/StepNum;
 
 double delay[delay_time];
@@ -148,9 +148,9 @@ void Object::pid_update(){
     Kp_i = Kp_i + 0.0000000000003*degZ;
     Kp_d = 20*(degZ - old_degZ);
     
-    Ki_p = 0.0000000018*degZ;
-    Ki_i = Ki_i + 0.000000000002*degZ;
-    Ki_d = 0.000003*(degZ - old_degZ);
+    Ki_p = 0.00000000018*degZ;
+    Ki_i = Ki_i + 0.0000000000002*degZ;
+    Ki_d = 0.0000003*(degZ - old_degZ);
     
     Kd_p = 9*degZ;
     Kd_i = Kd_i + 0.0000002*degZ;
@@ -238,6 +238,7 @@ void Object::step(double torque, double start_time, double time){
 void Object::hysteresis(){
     
     if((MotorInput < 2*MaxPower*0.05)&&(MotorInput > -2*MaxPower*0.05)){
+        if(MotorPower * MotorInput < 0) MotorPower = 0;
         if((MotorPower < 2*MaxPower*0.001)&&(MotorPower > -2*MaxPower*0.001))
             MotorPower = 0;
         else
@@ -247,6 +248,7 @@ void Object::hysteresis(){
     
     
 }
+
 
 
 
@@ -268,7 +270,7 @@ int main(int argc, const char * argv[]) {
         object.MotorDelay();
         object.hysteresis();
         object.impulse(300, 0, t);
-        object.step(0.1, 0, t);
+        object.step(0, 0, t);
         object.printDeg(t);
         
         
