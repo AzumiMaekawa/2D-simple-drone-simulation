@@ -18,7 +18,7 @@
 double cnt = 0;
 double dt = 0.01;
 const int delay_time = 50;
-const int StepNum = 200;
+const int StepNum = 300;
 double StepSize = MaxPower/StepNum;
 
 double delay[delay_time];
@@ -69,29 +69,9 @@ public:
     double Kd_p, Kd_i, Kd_d;
     
     
-    
-    
-    
     Object(double initial_degZ_vel, double initial_degZ);
     
-    
-    /*
-     
-     void Object(double initial_degZ_vel, double initial_degZ){
-     x = 0; y = 0;
-     l = 1;
-     I = 1;
-     
-     
-     degZ = initial_degZ;
-     degZ_vel = initial_degZ_vel;
-     
-     
-     RightSide_y = l * sin(degZ);
-     LeftSide_y = l * sin(degZ);
-     
-     
-     }*/
+
     
     void update();
     void pid_update();
@@ -108,8 +88,7 @@ public:
 };
 
 Object::Object(double initial_degZ_vel, double initial_degZ){
-    //   x = 0; y = 0;
-    l = 1;
+    //   x = 0; y = 0;    l = 1;
     I = 1;
     
     
@@ -122,8 +101,7 @@ Object::Object(double initial_degZ_vel, double initial_degZ){
     
     
     
-    //   RightSide_y = l * sin(degZ);
-    //   LeftSide_y = l * sin(degZ);
+
     
     
 }
@@ -136,17 +114,16 @@ void Object::update(){
     
     degZ_vel = degZ_vel + degZ_accel * dt;
     degZ = degZ + degZ_vel * dt;
-    //    RightSide_y = l * sin(degZ);
-    //    LeftSide_y = l * sin(degZ);
+
 }
 
 void Object::pid_update(){
     
-    //pidパラメータにpid制御
+    //pid control to pid parameter
     
     Kp_p = 0.015*degZ;
-    Kp_i = Kp_i + 0.000000000003*degZ;
-    Kp_d = 50*(degZ - old_degZ);
+    Kp_i = Kp_i + 0.0000000000003*degZ;
+    Kp_d = 20*(degZ - old_degZ);
     
     Ki_p = 0.000000018*degZ;
     Ki_i = Ki_i + 0.00000000009*degZ;
@@ -156,7 +133,7 @@ void Object::pid_update(){
     Kd_i = Kd_i + 0.0000002*degZ;
     Kd_d = 0.004*(degZ - old_degZ);
     
-    //絶対値をとる
+    //absolute value
     Kp = fabs(Kp_p + Kp_i + Kp_d);
     Ki = fabs(Ki_p + Ki_i + Ki_d);
     Kd = fabs(Kd_p + Kd_i + Kd_d);
@@ -164,7 +141,7 @@ void Object::pid_update(){
 
 void Object::MotorControl(){
     
-    //pid制御
+    //pid control
     f_p = Kp * degZ;
     f_i = f_i + Ki * degZ;
     f_d = Kd * (degZ - old_degZ);
@@ -173,7 +150,7 @@ void Object::MotorControl(){
     f_right = -f_p - f_i - f_d;
     
     
-    //モーター入力をステップ状にする
+    //make the input stepped
     if((-MotorPowerStep[0] < f_right)&&(f_right < MotorPowerStep[0]))
         f_right = 0;
     for(int j = 1; j < StepNum; j++){
@@ -189,7 +166,7 @@ void Object::MotorControl(){
     
     f_left = -f_right;
     
-    //最大出力制限
+    //limit
     if(f_right > MaxPower) f_right = MaxPower;
     if(f_right < -MaxPower) f_right = -MaxPower;
     if(f_left > MaxPower) f_left = MaxPower;
@@ -269,7 +246,7 @@ int main(int argc, const char * argv[]) {
         object.MotorControl();
         object.MotorDelay();
         object.hysteresis();
-        object.impulse(10, 0, t);
+        object.impulse(200, 0, t);
         object.step(0.0, 0, t);
         object.printDeg(t);
         
