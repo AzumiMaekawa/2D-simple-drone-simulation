@@ -1,10 +1,10 @@
-# ObjectSimulation
+# 2d simple drone simulation
 ====
 
 Overview
 
 ## Description
-this is the simulation in 2D for the baloon drone
+this is the simple simulation of 2D drone to test PID control
 
 
 ## AuthorA
