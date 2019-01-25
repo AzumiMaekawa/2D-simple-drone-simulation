@@ -1,5 +1,4 @@
 # 2d simple drone simulation
-====
 
 Overview
 
